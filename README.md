@@ -1,2 +1,4 @@
 # platform_gitops
-Use Flux to manage deployments
+- Monitor org repos (/<repo_name>/environments/sandbox) and deploy based on manifests inside of those repos
+- Use Kustomize to manage per environment
+- 
