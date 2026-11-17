@@ -21,3 +21,8 @@
     - `platform-services`
         - `/environments/sandbox/kustomization.yaml`
             - manage kustomization base and env-specific cluster resources
+
+## Tests
+- Cluster Test scripts
+    - `security-audit.sh`: checks overly permissive rolebindings, service accounts using secrets, pods running as root
+    - `scan-for-tokens.sh`" runs in CICD pipeline. check for leaked ServiceAccount tokens, kubeconfig artifacts
