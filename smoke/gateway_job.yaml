@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: smoke-gateway
+  namespace: istio-system
+spec:
+  backoffLimit: 0          # Fail immediately — do not retry on error
+  ttlSecondsAfterFinished: 240   # Auto-delete Job object after 2 minutes
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: curl
+          image: curlimages/curl:8.10.1    # Pin image version — no :latest
+          env:
+            - name: SMOKE_HOST
+              value: "istio-ingressgateway.local"   # Override via kubectl set env or envFrom
+          args:
+            - sh
+            - -c
+            - |
+              set -e
+              H="${SMOKE_HOST:-istio-ingressgateway.local}"
+              echo "Testing gateway with Host: $H"
+              curl -sS \
+                -H "Host: $H" \
+                --max-time 10 \
+                --retry 3 \
+                --retry-delay 2 \
+                http://istio-ingressgateway.istio-system.svc.cluster.local/ \
+                | head -n 3
+              echo "Smoke test PASSED"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
